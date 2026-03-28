@@ -3,7 +3,8 @@
     <section class="hero-panel">
       <div class="animation-area">
 
-
+     
+ <animation />
     
       </div>
     </section>
@@ -38,6 +39,7 @@ placeholder="嗨~今天有什么灵感？"
 <script setup lang="ts">
 import { ref } from 'vue'
 import { AIClient, ChatMessage } from './services/aiClient'
+import animation from './components/animation.vue'
 
 const userInput = ref('')
 const messages = ref<ChatMessage[]>([

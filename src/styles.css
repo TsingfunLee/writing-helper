@@ -51,6 +51,9 @@ body {
   overflow: hidden;
   background: linear-gradient(180deg, rgba(186, 230, 143, 0.35), rgba(236, 253, 221, 0.95));
   box-shadow: 4px 8px 20px rgba(101, 163, 13, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .bubble {
