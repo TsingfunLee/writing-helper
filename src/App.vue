@@ -1,0 +1,76 @@
+<template>
+  <div class="page-shell">
+    <section class="hero-panel">
+      <div class="animation-area">
+        <div class="bubble bubble-1" />
+        <div class="bubble bubble-2" />
+        <div class="bubble bubble-3" />
+      </div>
+      <div class="hero-copy">
+        <!-- <h1>AI 对话演示</h1>
+        <p>在这里输入问题，AI 会返回智能回复。这个 demo 仅作展示。</p> -->
+      </div>
+    </section>
+
+    <section class="chat-panel">
+      <div class="chat-card">
+        <div class="chat-body">
+          <div v-for="(message, index) in messages" :key="index" :class="['chat-message', message.role]">
+            <div class="message-label">{{ message.role === 'user' ? '我' : 'AI' }}</div>
+            <div class="message-text">{{ message.content }}</div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <input
+            v-model="userInput"
+            @keydown.enter="sendMessage"
+            placeholder="输入你的问题，按 Enter 发送"
+            :disabled="isLoading"
+          />
+          <button @click="sendMessage" :disabled="isLoading || !userInput.trim()">
+            {{ isLoading ? '发送中...' : '发送' }}
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { AIClient, ChatMessage } from './services/aiClient'
+
+const userInput = ref('')
+const messages = ref<ChatMessage[]>([
+  { role: 'assistant', content: '你好！欢迎使用 AI 对话演示。请在下方输入你的问题。' },
+])
+const isLoading = ref(false)
+
+const apiKey = import.meta.env.VITE_OPENAI_API_KEY as string
+const model = (import.meta.env.VITE_OPENAI_MODEL as string) || 'gpt-4o-mini'
+const aiClient = new AIClient(apiKey, model)
+
+async function sendMessage() {
+  const content = userInput.value.trim()
+  if (!content || isLoading.value) {
+    return
+  }
+
+  messages.value.push({ role: 'user', content })
+  userInput.value = ''
+  isLoading.value = true
+
+  try {
+    const assistantText = await aiClient.sendMessage(messages.value)
+    messages.value.push({ role: 'assistant', content: assistantText })
+  } catch (error) {
+    console.error(error)
+    messages.value.push({
+      role: 'assistant',
+      content: '请求失败，请检查 .env 中的 VITE_OPENAI_API_KEY 或网络连接。',
+    })
+  } finally {
+    isLoading.value = false
+  }
+}
+</script>
