@@ -2,13 +2,9 @@
   <div class="page-shell">
     <section class="hero-panel">
       <div class="animation-area">
-        <div class="bubble bubble-1" />
-        <div class="bubble bubble-2" />
-        <div class="bubble bubble-3" />
-      </div>
-      <div class="hero-copy">
-        <!-- <h1>AI 对话演示</h1>
-        <p>在这里输入问题，AI 会返回智能回复。这个 demo 仅作展示。</p> -->
+
+
+    
       </div>
     </section>
 
@@ -42,7 +38,7 @@ import { AIClient, ChatMessage } from './services/aiClient'
 
 const userInput = ref('')
 const messages = ref<ChatMessage[]>([
-  { role: 'assistant', content: '你好！欢迎使用 AI 对话演示。请在下方输入你的问题。' },
+    //   { role: 'assistant', content: '你好！欢迎使用 AI 对话演示。请在下方输入你的问题。' },
 ])
 const isLoading = ref(false)
 
