@@ -1,6 +1,11 @@
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system'
-  content: string
+  text: string
+}
+
+export interface InputMessage {
+  role: 'user' | 'assistant' | 'system'
+  content: Array<{type: string, text: string}>
 }
 
 export class AIClient {
@@ -19,7 +24,16 @@ export class AIClient {
   async sendMessage(messages: ChatMessage[]): Promise<string> {
     if (!this.apiKey) {
       throw new Error('Missing OpenAI API key')
-    }
+      }
+      
+      const systemMessage: InputMessage = {
+          role: 'system',
+          content: [{
+              type: 'input_text',
+              text: '你是一个小学生作文写作老师。你能一步一步引导学生完成作文写作。你会根据学生的输入，提供苏格拉底式的提问，要求学生思考并且自己输出。请遵守以下规则：1.只包含必要的提问和解释，简洁明了。2.字数在140字以内。3.每次提问都要引导学生思考，不要直接给出答案。4.如果学生的输入不清楚或者不完整，你需要提出澄清性问题，帮助学生完善输入。5.多鼓励学生，激发他们创作兴趣。'
+          }]
+      }
+        
 
     const response = await fetch('https://ark.cn-beijing.volces.com/api/v3/responses', {
       method: 'POST',
@@ -29,15 +43,18 @@ export class AIClient {
       },
       body: JSON.stringify({
         model: this.model,
-        stream: true,
+        // stream: true,
         tools: [{
             type: 'web_search',
             max_keyword: 3
           }],
-        input: messages.map(msg => ({
+        input:[systemMessage, ...messages.map(msg => ({
           role: msg.role,
-          content: msg.content
-        }))
+            content: [{
+                type: 'input_text',
+                text: msg.text
+          }]
+        }))]
       }),
     })
 
@@ -47,6 +64,6 @@ export class AIClient {
     }
 
     const data = await response.json()
-    return data.choices?.[0]?.message?.content?.trim() ?? 'AI 未返回内容。'
+    return data.output[0].content[0].text ?? 'AI 未返回内容。'
   }
 }
