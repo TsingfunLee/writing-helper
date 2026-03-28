@@ -10,17 +10,20 @@
 
     <section class="chat-panel">
       <div class="chat-card">
-        <div class="chat-body">
+               <!-- <div class="chat-body">
           <div v-for="(message, index) in messages" :key="index" :class="['chat-message', message.role]">
             <div class="message-label">{{ message.role === 'user' ? '我' : 'AI' }}</div>
             <div class="message-text">{{ message.content }}</div>
           </div>
-        </div>
+      </div> -->
+
+      
         <div class="chat-input-area">
           <input
             v-model="userInput"
             @keydown.enter="sendMessage"
-            placeholder="输入你的问题，按 Enter 发送"
+placeholder="嗨~今天有什么灵感？"
+          
             :disabled="isLoading"
           />
           <button @click="sendMessage" :disabled="isLoading || !userInput.trim()">
